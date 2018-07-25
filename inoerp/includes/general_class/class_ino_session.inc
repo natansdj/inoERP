@@ -210,7 +210,7 @@ class ino_session extends dbObject {
   if ($user_a) {
    $user_i = $user_a[0];
   } else {
-   return false;
+   return ;
   }
 
   if ($user_i && $user_i->ino_user_id > 0 && !empty($php_sid)) {
@@ -224,7 +224,7 @@ class ino_session extends dbObject {
   }
 
 
-  return true;
+  return serialize($user_i->session_data);
  }
 
  public function session_write() {
@@ -255,6 +255,8 @@ class ino_session extends dbObject {
 //  $user = ino_anonymous_user();
   // Unset the session cookies.
   $this->_session_delete_cookie(session_name());
+
+  return true;
  }
 
  function session_gc($lifetime) {
