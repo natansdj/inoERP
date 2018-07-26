@@ -90,7 +90,7 @@ class ino_session extends dbObject {
 
    $this->_session_token = md5(uniqid(mt_srand(), true));
    $_SESSION['session_token'] = $this->_session_token;
-   
+
    //create session details
    try {
     $this->_create_sesssion(true);
@@ -108,11 +108,11 @@ class ino_session extends dbObject {
   if (empty($this->user_id) && empty($_SESSION['user_id'])) {
    return false;
   }
-  
+
   if(!$new_session){
    return false;
   }
-  
+
   $ino_see = new ino_session();
   $ino_see->ino_user_id = $this->user_id;
 
@@ -134,7 +134,7 @@ class ino_session extends dbObject {
   } catch (Exception $e) {
    throw new Exception('Unable to create session', 'INO_SESSION_01');
   }
-  
+
 
  }
 
@@ -206,11 +206,11 @@ class ino_session extends dbObject {
  public function session_read($php_sid) {
 
   $user_a = $this->find_by_ColumnNameVal('php_session_id', $php_sid);
- 
+
   if ($user_a) {
    $user_i = $user_a[0];
   } else {
-   return false;
+   return '';
   }
 
   if ($user_i && $user_i->ino_user_id > 0 && !empty($php_sid)) {
@@ -224,7 +224,7 @@ class ino_session extends dbObject {
   }
 
 
-  return true;
+  return serialize($user_i->session_data);
  }
 
  public function session_write() {
@@ -255,6 +255,8 @@ class ino_session extends dbObject {
 //  $user = ino_anonymous_user();
   // Unset the session cookies.
   $this->_session_delete_cookie(session_name());
+
+  return true;
  }
 
  function session_gc($lifetime) {
@@ -268,9 +270,6 @@ $secure = false; //change it as per your settings
 ini_set('session.use_only_cookies', 1);
 ini_set('session.entropy_file', '/dev/urandom');
 ini_set('session.entropy_length', '512');
-
-$save_path = $home_dir.'/var/cache';
-ini_set('session.save_path', $save_path);
 
 $cookieParams = session_get_cookie_params();
 session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], $secure, true);
@@ -287,4 +286,3 @@ if (!isset($_SESSION['recent_visit'])) {
 }
 $session->check_login();
 $is = &$session;
-?>
