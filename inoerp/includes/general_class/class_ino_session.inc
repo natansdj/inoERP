@@ -210,7 +210,7 @@ class ino_session extends dbObject {
   if ($user_a) {
    $user_i = $user_a[0];
   } else {
-   return ;
+   return false;
   }
 
   if ($user_i && $user_i->ino_user_id > 0 && !empty($php_sid)) {
@@ -224,7 +224,7 @@ class ino_session extends dbObject {
   }
 
 
-  return serialize($user_i->session_data);
+  return true;
  }
 
  public function session_write() {
@@ -255,8 +255,6 @@ class ino_session extends dbObject {
 //  $user = ino_anonymous_user();
   // Unset the session cookies.
   $this->_session_delete_cookie(session_name());
-
-  return true;
  }
 
  function session_gc($lifetime) {
@@ -270,6 +268,9 @@ $secure = false; //change it as per your settings
 ini_set('session.use_only_cookies', 1);
 ini_set('session.entropy_file', '/dev/urandom');
 ini_set('session.entropy_length', '512');
+
+$save_path = $home_dir.'/var/cache';
+ini_set('session.save_path', $save_path);
 
 $cookieParams = session_get_cookie_params();
 session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], $secure, true);
